@@ -1,16 +1,16 @@
-use hello_world::greeter_server::{Greeter, GreeterServer};
-use hello_world::{HelloReply, HelloRequest};
-use tonic::{transport::Server, Request, Response, Status};
+use minimint::minimint_server::{Minimint, MinimintServer};
+use minimint::{HelloReply, HelloRequest};
+use tonic::{Request, Response, Status};
 
-pub mod hello_world {
-    tonic::include_proto!("helloworld");
+pub mod minimint {
+    tonic::include_proto!("minimint");
 }
 
 #[derive(Debug, Default)]
-pub struct MyGreeter {}
+pub struct Server {}
 
 #[tonic::async_trait]
-impl Greeter for MyGreeter {
+impl Minimint for Server {
     async fn say_hello(
         &self,
         request: Request<HelloRequest>,
@@ -26,10 +26,10 @@ impl Greeter for MyGreeter {
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let addr = "[::1]:50051".parse()?;
-    let greeter = MyGreeter::default();
+    let greeter = Server::default();
 
-    Server::builder()
-        .add_service(GreeterServer::new(greeter))
+    tonic::transport::Server::builder()
+        .add_service(MinimintServer::new(greeter))
         .serve(addr)
         .await?;
 
